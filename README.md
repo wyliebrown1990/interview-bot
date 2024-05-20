@@ -14,4 +14,5 @@
 3. Install dependencies: pip install -qU langchain-openai, pip install dotenv, pip install faiss-cpu
 4. Prepare a file in your directory with .txt documents holding the information you want your model trained on. I will be launching an update later on this project with youtube transcription bot, web scraper and a user friendly way to build out this folder. 
 5. run the python file and when prompted provided the file path to your training data
-6. Start chatting, feel free to ask bot to reference previous converation, continue getting interview questions until you are satisfied. # interview-bot
+6. You will now see 2 new files in your directory: embedding.npy and chunks.txt these were created from the files in the file path you provided. 
+7. Start chatting, feel free to ask bot to reference previous converation, continue getting interview questions until you are satisfied. # interview-bot
