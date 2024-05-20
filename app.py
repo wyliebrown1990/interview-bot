@@ -78,6 +78,15 @@ def get_relevant_context(question, index, chunks, embedder, k=5):
 
 # STEP 2: BUILD OUT YOUR INTERVIEW BOT ONCE YOUR VECTOR DATABASE INDEX IS CREATED AND READY FOR RETRIEVAL
 
+# Prompt the user for interview customization inputs
+print("To help this chatbot deliver detailed interview prep, please provide the following information:")
+
+interview_role = input("Enter the role the interview is for (e.g., Sales Engineer, Product Manager, etc.): ").strip()
+company_name = input("Enter the name of the company you are planning to interview at (e.g., Google, Meta, Microsoft): ").strip()
+industry = input("Enter the industry the company operates in (e.g., Advertising, Observability, Gen AI, etc.): ").strip()
+#key_skills = input("Enter the key skills required for the role (e.g., Kubernetes, microservices, etc.): ").strip()
+
+
 # Define in-memory store for chat histories
 store = {}
 
@@ -92,7 +101,7 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "You are are here to act as the user's interview coach. The user wants to change careers and industries. The user is coming from a Product Management background and transitioning into Sales Engineering, also called a Solutions Consultant at some companies. You should be asking challenging interview questions about how to be a Sales Engineer and how to be a Sales Engineer at the specific company they are interviewing for. Answer all questions to the best of your ability."
+            f"You are are here to act as the user's interview coach. The user is inteviewing for a position as a {interview_role}. You should be asking challenging interview questions about how to be a {interview_role} specifically at {company_name} which is in the {industry} industry. Answer all questions to the best of your ability."
         ),
         MessagesPlaceholder(variable_name="messages"),
     ]
@@ -122,7 +131,7 @@ def interview_loop(index, chunks, embedder):
     
     while True:
         initial_prompt = (
-            "Ask this candidate a question they would very likely encounter in an interview about the company they are interviewing at called Observe Inc."
+            "Ask this candidate a question they would very likely encounter in an interview to be a {intervie_role} at the company {company_name} in the {industry} industry."
         )
         relevant_context = get_relevant_context(initial_prompt, index, chunks, embedder)
         context_str = " ".join(relevant_context)
@@ -147,7 +156,7 @@ def interview_loop(index, chunks, embedder):
             {"role": "system", "content": f"Context: {context_str}"},
             {"role": "user", "content": f"Question: {question}"},
             {"role": "user", "content": f"Answer: {user_answer}"},
-            {"role": "user", "content": "Analysis: Provide a thorough analysis of how the user answered the interview question you gave them. Check that the user covered every topic in your question. Check that they weren't too verbose and that they stayed on topic. Make sure they are giving ansers that a Sales Engineer would give. Make sure their information about Observe Inc is accurate. Make sure they are following interview best practices. Be as critical as possible to help them succeed in the future. If the user doesnt' provide a real example of how they accomplished something related to the interview question then remind them they should always use real world examples from their work history when answering interview questions. Give them examples of how they could do better if they don't have a perfect answer."}
+            {"role": "user", "content": f"Analysis: Provide a thorough analysis of how the user answered the interview question you gave them. Check that the user covered every topic in your question. Check that they answered from the perspective of a {interview_role} at {company_name} company in the {industry} industry. Check that they weren't too verbose but also weren't too short in their response. Check that they stayed on topic without going into irrelevant tangents. Make sure their information about {company_name} is accurate. Make sure they are following interview best practices. Be as critical as possible to help them succeed in the future. If the user doesnt' provide a real example of how they accomplished something related to the interview question then remind them they should always use real world examples from their work history when answering interview questions. Give them examples of how they could do better if they don't have a perfect answer."}
         ]
         response = with_message_history.invoke(
             {"messages": [HumanMessage(content=user_answer)]},
