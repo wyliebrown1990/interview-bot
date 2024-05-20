@@ -92,7 +92,7 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "You are a world-class interview coach for people looking to start a new career in sales engineering, also called solution consulting. Answer all questions to the best of your ability."
+            "You are are here to act as the user's interview coach. The user wants to change careers and industries. The user is coming from a Product Management background and transitioning into Sales Engineering, also called a Solutions Consultant at some companies. You should be asking challenging interview questions about how to be a Sales Engineer and how to be a Sales Engineer at the specific company they are interviewing for. Answer all questions to the best of your ability."
         ),
         MessagesPlaceholder(variable_name="messages"),
     ]
@@ -147,7 +147,7 @@ def interview_loop(index, chunks, embedder):
             {"role": "system", "content": f"Context: {context_str}"},
             {"role": "user", "content": f"Question: {question}"},
             {"role": "user", "content": f"Answer: {user_answer}"},
-            {"role": "user", "content": "Analysis: Provide feedback on the accuracy and completeness of the answer. Explain how the answer could be improved."}
+            {"role": "user", "content": "Analysis: Provide a thorough analysis of how the user answered the interview question you gave them. Check that the user covered every topic in your question. Check that they weren't too verbose and that they stayed on topic. Make sure they are giving ansers that a Sales Engineer would give. Make sure their information about Observe Inc is accurate. Make sure they are following interview best practices. Be as critical as possible to help them succeed in the future. If the user doesnt' provide a real example of how they accomplished something related to the interview question then remind them they should always use real world examples from their work history when answering interview questions. Give them examples of how they could do better if they don't have a perfect answer."}
         ]
         response = with_message_history.invoke(
             {"messages": [HumanMessage(content=user_answer)]},
@@ -160,6 +160,9 @@ def interview_loop(index, chunks, embedder):
         another_question = input("Do you want another question? (yes/no): ").strip().lower()
         if another_question != 'yes':
             break
+        else:
+            # Ask a new question only if the user wants another question
+            continue
 
 # Start the interview loop
 interview_loop(index, chunks, embedder)
