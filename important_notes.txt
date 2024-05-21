@@ -3,4 +3,3 @@ table name - training_data
 id | job_title | company_name | data | embeddings | created_at | processed_files 
 Indexes:
     "training_data_pkey" PRIMARY KEY, btree (id)
-
